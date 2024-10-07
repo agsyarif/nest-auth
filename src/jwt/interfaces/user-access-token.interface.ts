@@ -3,6 +3,7 @@ import { ITokenBase } from './token-base.interface';
 
 export interface IUserAccessPayload {
   user: IUser;
+  id: number;
 }
 
 export interface IUserAccessToken extends IUserAccessPayload, ITokenBase {}

@@ -12,6 +12,8 @@ import { config } from './config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CacheConfig } from './config/cache.config';
 import { UploadModule } from './upload/upload.module';
+import { ArticleModule } from './article/article.module';
+import { AccessControlModule } from './access-control/access-control.module';
 
 @Module({
   imports: [
@@ -35,7 +37,9 @@ import { UploadModule } from './upload/upload.module';
     AuthModule,
     JwtModule,
     PrismaModule,
-    UploadModule
+    UploadModule,
+    ArticleModule,
+    AccessControlModule
   ],
   controllers: [AppController],
   providers: [AppService],

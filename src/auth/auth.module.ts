@@ -5,6 +5,7 @@ import { UserModule } from '../user/user.module';
 import { JwtModule } from '../jwt/jwt.module';
 import { CommonModule } from '../common/common.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AccessControlModule } from '../access-control/access-control.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     UserModule,
     JwtModule,
     CommonModule,
+    AccessControlModule
   ],
   providers: [AuthService],
   controllers: [AuthController]

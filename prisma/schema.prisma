@@ -16,7 +16,9 @@ datasource db {
 model Role {
   id        Int       @id @default(autoincrement())
   name      String    @db.VarChar(255) @unique
-  ModelHasRoles ModelHasRole[]
+  
+  permissions RolePermission[]
+  users       UserRoles[]
 
   @@map("roles") 
 }
@@ -36,16 +38,46 @@ model User {
   createdAt          DateTime @db.Timestamp @default(dbgenerated("CURRENT_TIMESTAMP"))
   updatedAt          DateTime @db.Timestamp @default(dbgenerated("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")) @updatedAt
   
-  modelHasRoles      ModelHasRole[]
+  roles        UserRoles[]
+  permissions  UserPermission[]
+
   @@map("users") 
 }
 
-model ModelHasRole {
-  roleId    Int
-  modelId   Int
-  role      Role    @relation(fields: [roleId], references: [id])
-  user      User    @relation(fields: [modelId], references: [id])
+model Permission {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  
+  roles       RolePermission[]
+  users       UserPermission[]
+}
 
-  @@id([roleId, modelId])
-  @@map("model_has_roles")
+model RolePermission {
+  roleId       Int
+  permissionId Int
+
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model UserRoles {
+  userId       Int
+  roleId       Int
+
+  user         User       @relation(fields: [userId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model UserPermission {
+  userId       Int
+  permissionId Int
+
+  user         User       @relation(fields: [userId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([userId, permissionId])
 }

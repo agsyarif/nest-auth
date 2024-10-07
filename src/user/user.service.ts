@@ -8,13 +8,16 @@ import { IUser } from './interfaces/user.interface';
 import dayjs from 'dayjs';
 import { UpdateUserDto } from './dtos/update.dto';
 import { UploadService } from '../upload/upload.service';
+import { AccessControlService } from '../access-control/access-control.service';
+import { RoleId } from '../common/enums/roles.enum';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prisma: PrismaClient,
     private readonly commonService: CommonService,
-    private readonly uploadService: UploadService
+    private readonly uploadService: UploadService,
+    private readonly accessControlService: AccessControlService
   ) {}
 
   public async create(
@@ -47,6 +50,8 @@ export class UserService {
       await this.assignRoleToUser(user.id, 'member', prisma);
       return user;
     });
+
+    await this.accessControlService.assignRoleToUser(createdUser.id, RoleId.Member)
 
     return createdUser;
 
@@ -89,7 +94,13 @@ export class UserService {
         ...filterOr,
       },
       orderBy: {[sortField]: sortDir },
-      include: { modelHasRoles: { include: { role: true } }, wallets: true },
+      include: {
+        roles: {
+          include: {
+            role: true
+          }
+        }
+      },
     },
     {
       page: pageNumber
@@ -99,17 +110,20 @@ export class UserService {
     return [data, result.meta]
   }
 
-  public async findOneById(id: number): Promise<User> {
+  public async findOneById(id: number): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
       include: { 
-        modelHasRoles: { 
-          include: { 
-            role: true 
-          } 
+        roles: {
+          include: {
+            role: true
+          }
         }
       },
     });
+    
+    console.log(user);
+    
     this.commonService.checkEntityExistence(user, 'User');
     return user;
   }
@@ -117,12 +131,12 @@ export class UserService {
   public async findOneByEmail(email: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
-      include: { 
-        modelHasRoles: { 
-          include: { 
-            role: true 
-          } 
-        }
+      include: {
+        roles: {
+          include: {
+            role: true
+          }
+        } 
       },
     });
 
@@ -134,10 +148,10 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
       include: { 
-        modelHasRoles: { 
-          include: { 
-            role: true 
-          } 
+        roles: {
+          include: {
+            role: true
+          }
         }
       },
     });
@@ -152,10 +166,10 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: { 
-        modelHasRoles: { 
-          include: { 
-            role: true 
-          } 
+        roles: {
+          include: {
+            role: true
+          }
         }
       },
     });
@@ -302,6 +316,10 @@ export class UserService {
   }
 
   public checkRoles(payload, role) : boolean {
+    const user = payload.user;
+    console.log(user.roles.role);
+    console.log(role);
+    
     return payload.user.modelHasRoles[0].role.name?.includes(role);
   }
   
