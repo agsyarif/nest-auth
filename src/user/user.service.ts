@@ -47,7 +47,6 @@ export class UserService {
 
     const createdUser = await this.prisma.$transaction(async (prisma) => {
       const user = await prisma.user.create({ data: newUser });
-      await this.assignRoleToUser(user.id, 'member', prisma);
       return user;
     });
 

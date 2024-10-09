@@ -39,7 +39,7 @@ import { AccessControlModule } from './access-control/access-control.module';
     PrismaModule,
     UploadModule,
     ArticleModule,
-    AccessControlModule
+    AccessControlModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,15 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CommonModule } from '../common/common.module';
-import { JwtModule } from '../jwt/jwt.module';
 import { UploadModule } from '../upload/upload.module';
-import { AccessControlModule } from '../access-control/access-control.module';
 
+@Global()
 @Module({
   imports: [
-    CommonModule,
-    UploadModule,
-    AccessControlModule
+    UploadModule
   ],
   providers: [UserService],
   exports: [UserService]

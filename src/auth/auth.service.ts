@@ -37,7 +37,8 @@ export class AuthService {
     //   domain,
     // );
     // this.mailerService.sendConfirmationEmail(user, confirmationToken);
-
+    console.log(newUser);
+    
     const user = await this.userService.findOneById(newUser.id);
     const [accessToken, refreshToken] = await this.generateAuthTokens(
       user,
